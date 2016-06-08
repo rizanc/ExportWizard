@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,30 +13,47 @@ namespace ExportWizard.DAL.Exports
     {
         public String GetSettings()
         {
-            ExportRecord mainExport = GetApplicationUser();
-            ExportRecord secondaryExport = GetCashiers();
+            String filename = @"C:\Users\crizan\Desktop\Datavision_Config.json";
+            String text = System.IO.File.ReadAllText(filename);
+
+            var exportConfig = JsonConvert.DeserializeObject<Models.QuickExport.Configuration>(text);
+            if (exportConfig == null)
+            {
+                throw new ArgumentException("Could not parse Export config located at " + filename);
+            }
+
+            ExportRecord mainExport = GetExportRecord(exportConfig.MainExport);
 
             ExportModel export = new ExportModel()
             {
                 MainExport = mainExport,
-                SubExports = new List<ExportRecord>() { secondaryExport }
+                SubExports = new List<ExportRecord>()
             };
+
+            if (exportConfig.SubExports != null)
+            {
+                foreach (var subExport in exportConfig.SubExports)
+                {
+                    export.SubExports.Add(GetExportRecord(subExport));
+                }
+            }
 
             string exportSerialized = new ExportSerializer().Serialize(export);
 
-            //StringBuilder sb = Muckify(ref exportSerialized);
-
-            //exportSerialized = sb.ToString();
-
             return exportSerialized;
+
         }
 
-        public ExportRecord GetApplicationUser()
+
+        public ExportRecord GetExportRecord(Models.QuickExport.Export export)
         {
 
-            var header = GetDefaultHeader("EXP_APPLICATION_USER", "Export for Application$_User", "APPLICATION$_USER");
+            var header = GetDefaultHeader(
+                export.Header.FileType,
+                export.Header.FileDescription,
+                export.Header.SourceViewCode);
 
-            String[] fields = { "app_user", "app_user_id", "insert_date", "update_date" };
+            String[] fields = export.Columns;
 
             var details = new List<ColumnModel>();
             int counter = 1;
@@ -55,31 +74,6 @@ namespace ExportWizard.DAL.Exports
 
         }
 
-        public ExportRecord GetCashiers()
-        {
-            var header = GetDefaultHeader("EXP_CASHIER", "Export for CASHIERS", "CASHIERS");
-
-            String[] fields = { "cashier_id", "resort", "title", "insert_date", "update_date" };
-
-
-            var details = new List<ColumnModel>();
-            int counter = 1;
-
-            foreach (var field in fields)
-            {
-                details.Add(GetDetail(counter, field));
-                counter++;
-            }
-
-            ExportRecord record = new ExportRecord()
-            {
-                header = header,
-                columns = details
-            };
-
-            return record;
-
-        }
 
         private HeaderModel GetDefaultHeader(String fileType, String description, String exportTable)
         {
