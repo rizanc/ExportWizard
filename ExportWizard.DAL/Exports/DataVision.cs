@@ -13,7 +13,8 @@ namespace ExportWizard.DAL.Exports
     {
         public String GetSettings()
         {
-            String filename = @"C:\Users\crizan\Desktop\Datavision_Config.json";
+            //String filename = @"C:\Users\crizan\Desktop\Datavision_Config.json";
+            String filename = @"C:\Users\crizan\Desktop\Datavision_Daily.json";
             String text = System.IO.File.ReadAllText(filename);
 
             var exportConfig = JsonConvert.DeserializeObject<Models.QuickExport.Configuration>(text);
@@ -36,7 +37,7 @@ namespace ExportWizard.DAL.Exports
                 {
                     export.SubExports.Add(GetExportRecord(subExport));
                 }
-            }
+            }            
 
             string exportSerialized = new ExportSerializer().Serialize(export);
 

@@ -1,4 +1,5 @@
 ﻿using Antlr3.ST;
+using ExportWizard.DAL.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,8 @@ namespace ExportWizard.DAL
             if (export.SubExports != null && export.SubExports.Count > 0)
                 vIsComponent = true;
 
+            PrintQuery(export.MainExport);
+
             string header = Serialize(export.MainExport.header, false, vIsComponent, exportSequence++);
             string column = Serialize(export.MainExport.header.FileType, export.MainExport.columns);
 
@@ -35,6 +38,8 @@ namespace ExportWizard.DAL
             {
                 foreach (var exportRecord in export.SubExports)
                 {
+                    PrintQuery(exportRecord);
+
                     header = Serialize(exportRecord.header, true, false, exportSequence++);
                     column = Serialize(exportRecord.header.FileType, exportRecord.columns, true);
 
@@ -123,6 +128,7 @@ namespace ExportWizard.DAL
                 //Data
                 serialized += Serialize(column, columnId++, false, isSubColumn); // +"\n----------------------------------------------------------------------------------------------\n";
             }
+
 
             return serialized;
         }
@@ -244,6 +250,26 @@ namespace ExportWizard.DAL
                 return "'CANNOT CONVERT PARAMETER'";
             }
 
+        }
+
+        // Log the export query, including the Where Clause.
+        private void PrintQuery(ExportRecord exportRecord)
+        {
+            if (exportRecord.columns == null)
+                throw new ArgumentException("No Columns defined for " + exportRecord.header.FileType);
+
+            string select = "Select ";
+            foreach(var column in exportRecord.columns)
+            {
+                select += column.ColName + ", ";
+            }
+
+            select = select.Remove(select.Length -2, 2);
+
+            select += " from " + exportRecord.header.SourceViewCode;
+
+            //TODO: Add Where
+            Logger.Debug(select);
         }
 
         #region Templates
