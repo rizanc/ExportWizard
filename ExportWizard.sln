@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportWizard.Tests", "Expor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportWizard.DAL", "ExportWizard.DAL\ExportWizard.DAL.csproj", "{E5F1ED6D-31F4-4B7A-9A31-B8993128E73E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OEWiz", "OEWiz\OEWiz.csproj", "{DE56EA3E-ADCE-4A2B-B287-16EAEA9BC03C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E5F1ED6D-31F4-4B7A-9A31-B8993128E73E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5F1ED6D-31F4-4B7A-9A31-B8993128E73E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5F1ED6D-31F4-4B7A-9A31-B8993128E73E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE56EA3E-ADCE-4A2B-B287-16EAEA9BC03C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE56EA3E-ADCE-4A2B-B287-16EAEA9BC03C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE56EA3E-ADCE-4A2B-B287-16EAEA9BC03C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE56EA3E-ADCE-4A2B-B287-16EAEA9BC03C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

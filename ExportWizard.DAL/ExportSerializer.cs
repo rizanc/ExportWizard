@@ -338,7 +338,7 @@ Declare
               sourceViewCode ,
               filename,
               '''csv''',
-              'COMMA',
+              'TAB',
               whereClause,
               'Y',
               -1,

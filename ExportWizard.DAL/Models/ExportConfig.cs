@@ -28,6 +28,7 @@ namespace ExportWizard.DAL.Models.QuickExport
         public String FileType { get; set; }
         public String FileDescription { get; set; }
         public String SourceViewCode { get; set; }
+        public String WhereClause { get; set; }
 
     }
 

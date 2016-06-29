@@ -1,20 +1,16 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExportWizard.DAL.Exports
 {
-    public class DataVision
+    public class GenericExport
     {
-        public String GetSettings()
+        public String GetSettings(String filename)
         {
-            String filename = @"C:\Users\crizan\Desktop\Datavision_Config.json";
-            //String filename = @"C:\Users\crizan\Desktop\Datavision_Daily.json";
             String text = System.IO.File.ReadAllText(filename);
 
             var exportConfig = JsonConvert.DeserializeObject<Models.QuickExport.Configuration>(text);
@@ -27,6 +23,7 @@ namespace ExportWizard.DAL.Exports
 
             ExportModel export = new ExportModel()
             {
+                Resort = exportConfig.Resort,
                 MainExport = mainExport,
                 SubExports = new List<ExportRecord>()
             };
@@ -37,7 +34,7 @@ namespace ExportWizard.DAL.Exports
                 {
                     export.SubExports.Add(GetExportRecord(subExport));
                 }
-            }            
+            }
 
             string exportSerialized = new ExportSerializer().Serialize(export);
 
@@ -45,14 +42,14 @@ namespace ExportWizard.DAL.Exports
 
         }
 
-
         public ExportRecord GetExportRecord(Models.QuickExport.Export export)
         {
 
             var header = GetDefaultHeader(
                 export.Header.FileType,
                 export.Header.FileDescription,
-                export.Header.SourceViewCode);
+                export.Header.SourceViewCode,
+                export.Header.WhereClause);
 
             String[] fields = export.Columns;
 
@@ -76,7 +73,7 @@ namespace ExportWizard.DAL.Exports
         }
 
 
-        private HeaderModel GetDefaultHeader(String fileType, String description, String exportTable)
+        private HeaderModel GetDefaultHeader(String fileType, String description, String exportTable, String whereClause)
         {
             return new HeaderModel()
             {
@@ -87,7 +84,7 @@ namespace ExportWizard.DAL.Exports
                 FileName = "'" + exportTable + "_'||PMS_P.resort||'_'||To_CHAR(pms_p.business_date,'YYYYMMDD')",
                 FileExtension = "''csv''",
                 ColSeparator = "TAB",
-                WhereClause = "",
+                WhereClause = whereClause,
                 RunInNaYn = "Y"
             };
         }
@@ -105,5 +102,6 @@ namespace ExportWizard.DAL.Exports
 
             };
         }
+
     }
 }

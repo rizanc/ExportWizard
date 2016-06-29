@@ -36,6 +36,9 @@ namespace ExportWizard.Tests.Initialization
 
             var script = new DataVision().GetSettings();
 
+            //var muckified = Muckify(ref script);
+
+
         }
 
         private static StringBuilder Muckify(ref string exportSerialized)
