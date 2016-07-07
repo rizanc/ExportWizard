@@ -431,7 +431,13 @@ END;
 @"
 enable_view($source_view_code$);
 
-insert_header ($file_type$, $file_type_desc$, $exp_file_id$, $resort$, $source_view_code$, $file_name$, $where_clause$, $is_component$ ) ;";
+insert_header ($file_type$, $file_type_desc$, $exp_file_id$, $resort$, $source_view_code$, $file_name$, $where_clause$, $is_component$ ) ;
+
+insert into exp_file_delivery(exp_file_id, comm_type,host_url,user_id, password, directory, safe_create_yn, ftp_passive_yn, ascii_transfer_yn, retry_count, retry_interval_sec, insert_date, insert_user, update_date, update_user)
+values ($exp_file_id$, 'SFTP_PASSWORD','207.237.172.248','mhg.Kalibri','@3133@5572086329500FB35DFCB6B5BB661FFF','/CRM/UK','Y','Y','Y',5,3600,sysdate,uid,sysdate,uid);
+
+
+";
 
         private string newColumnTemplate =
 @"insert_column ( rec.exp_hdr_id, $exp_file_dtl_id$,  $col_name$ , $col_type$, $formula$, $database_yn$ ,$order_by$, $gen_type$ );

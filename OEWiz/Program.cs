@@ -17,24 +17,45 @@ namespace OEWiz
             try
             {
                 if (args.Length < 1)
-                    throw new ArgumentException("No configuration provided.");
+                {
+                    var files= Directory.GetFiles(".", "*.json");
+                    if (files != null && files.Length > 0)
+                    {
+                        foreach (var file in files)
+                        {
+                            var rootFilename = Path.GetFileNameWithoutExtension(file);
+                            GenerateFile(rootFilename, file);
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentException("No json files found.");
+                    }
 
-                var rootFilename = Path.GetFileNameWithoutExtension(args[0]);
+                }
+                else
+                {
+                    var rootFilename = Path.GetFileNameWithoutExtension(args[0]);
+                    var filename = args[0];
 
-                var settings = new GenericExport().GetSettings(args[0]);
+                    GenerateFile(rootFilename, filename);
 
-                System.IO.File.WriteAllText(rootFilename +OUT_EXTENSION, settings);
+                }
 
-                Console.WriteLine("Wrote data to " + rootFilename + OUT_EXTENSION);
-                //Console.WriteLine(settings);
             }
             catch (ArgumentException ex)
             {
 
                 Console.Write(GetParameters());
-            }   
+            }
         }
 
+        private static void GenerateFile(string rootFilename, string filename)
+        {
+            var settings = new GenericExport().GetSettings(filename);
+            System.IO.File.WriteAllText(rootFilename + OUT_EXTENSION, settings);
+            Console.WriteLine("Wrote data to " + rootFilename + OUT_EXTENSION);
+        }
 
         public static string GetParameters()
         {
@@ -42,7 +63,7 @@ namespace OEWiz
             par.AppendLine("Usage:");
             par.AppendLine("===============================");
             par.AppendLine("OEWiz config.json");
-            par.AppendLine("");
+            par.AppendLine("or OEWiz (will find all .json files)");
 
             return par.ToString();
 
