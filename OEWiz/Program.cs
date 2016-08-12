@@ -6,39 +6,77 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OEWiz
+namespace OEGen
 {
     class Program
     {
         private const string OUT_EXTENSION = ".txt";
 
+        static Dictionary<String, String> parameters = new Dictionary<string, string>();
+
         static void Main(string[] args)
         {
             try
             {
+                if (args.Length == 1 && args[0] == "?")
+                {
+                    ShowParameters();
+                    return;
+                }
+
                 if (args.Length < 1)
                 {
-                    var files= Directory.GetFiles(".", "*.json");
-                    if (files != null && files.Length > 0)
-                    {
-                        foreach (var file in files)
-                        {
-                            var rootFilename = Path.GetFileNameWithoutExtension(file);
-                            GenerateFile(rootFilename, file);
-                        }
-                    }
-                    else
-                    {
-                        throw new ArgumentException("No json files found.");
-                    }
+                    ProcessAllFiles();
 
                 }
                 else
                 {
-                    var rootFilename = Path.GetFileNameWithoutExtension(args[0]);
-                    var filename = args[0];
 
-                    GenerateFile(rootFilename, filename);
+                    foreach (var arg in args)
+                    {
+                        var argPair = arg.Split(':');
+                        if (argPair == null || argPair.Length != 2)
+                        {
+                            ShowParameters();
+                            return;
+                        }
+                        else
+                        {
+                            if (argPair[0].ToLower().Equals("in"))
+                            {
+                                parameters.Add(argPair[0], argPair[1]);
+                            }
+                            else if (argPair[0].ToLower().Equals("resort"))
+                            {
+                                parameters.Add(argPair[0], argPair[1]);
+                            }
+                            else
+                            {
+                                ShowParameters();
+                                return;
+                            }
+                        }
+
+                    }
+
+                    String resort = null;
+                    if (parameters.ContainsKey("resort"))
+                    {
+                        resort = parameters["resort"];
+                    }
+
+                    if (parameters.ContainsKey("in"))
+                    {
+                        var rootFilename = Path.GetFileNameWithoutExtension(parameters["in"]);
+                        var filename = parameters["in"];
+
+                        GenerateFile(rootFilename, filename, resort);
+                    }
+                    else
+                    {
+                        ProcessAllFiles(resort);
+                    }
+
 
                 }
 
@@ -46,27 +84,51 @@ namespace OEWiz
             catch (ArgumentException ex)
             {
 
-                Console.Write(GetParameters());
+                ShowParameters();
             }
         }
 
-        private static void GenerateFile(string rootFilename, string filename)
+        private static void ProcessAllFiles(String resort = null)
         {
-            var settings = new GenericExport().GetSettings(filename);
+            var files = Directory.GetFiles(".", "*.json");
+            if (files != null && files.Length > 0)
+            {
+                foreach (var file in files)
+                {
+                    var rootFilename = Path.GetFileNameWithoutExtension(file);
+                    GenerateFile(rootFilename, file, resort);
+                }
+            }
+            else
+            {
+                throw new ArgumentException("No json files found.");
+            }
+        }
+
+        private static void GenerateFile(string rootFilename, string filename, string resort = null)
+        {
+            var settings = new GenericExport().GetSettings(filename, resort);
             System.IO.File.WriteAllText(rootFilename + OUT_EXTENSION, settings);
             Console.WriteLine("Wrote data to " + rootFilename + OUT_EXTENSION);
         }
 
-        public static string GetParameters()
+        public static void ShowParameters()
         {
             StringBuilder par = new StringBuilder();
-            par.AppendLine("Usage:");
-            par.AppendLine("===============================");
-            par.AppendLine("OEWiz config.json");
-            par.AppendLine("or OEWiz (will find all .json files)");
-
-            return par.ToString();
+            par.AppendLine("=============================================================================");
+            par.AppendLine("Usage:                                                                     ==");
+            par.AppendLine("=============================================================================");
+            par.AppendLine("OEWiz ?     // Get This Help Screen");
+            par.AppendLine("or");
+            par.AppendLine("OEWiz [in:config.json] [resort:*]");
+            par.AppendLine("");
+            par.AppendLine("[in:config.json]  File to process. If not provided, process all .json files");
+            par.AppendLine("[resort:*]        When present, overrides the resort in the .json");
+            par.AppendLine("=============================================================================");
+            Console.WriteLine(  par.ToString() );
 
         }
     }
+
+
 }

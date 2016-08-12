@@ -44,6 +44,8 @@ namespace ExportWizard.DAL
         public string WhereClause { get; set; }
         public string RunInNaYn { get; set; }
         public string InactiveYn { get; set; }
+        public string ProgramName { get; set; }
+        public string Company { get; set; }
         public DateTime InsertDate { get; set; }
         public int InsertUser { get; set; }
         public DateTime UpdateDate { get; set; }

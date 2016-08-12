@@ -9,7 +9,7 @@ namespace ExportWizard.DAL.Exports
 {
     public class GenericExport
     {
-        public String GetSettings(String filename)
+        public String GetSettings(String filename, String overrideResort = null)
         {
             String text = System.IO.File.ReadAllText(filename);
 
@@ -19,7 +19,16 @@ namespace ExportWizard.DAL.Exports
                 throw new ArgumentException("Could not parse Export config located at " + filename);
             }
 
-            ExportRecord mainExport = GetExportRecord(exportConfig.MainExport);
+            ExportRecord mainExport = GetExportRecord(exportConfig.FileName, exportConfig.MainExport);
+
+            //=========================================================================
+            // OVERRIDES
+            //=========================================================================
+            if (overrideResort != null)
+            {
+                exportConfig.Resort = overrideResort;
+            }
+            //==========================================================================
 
             ExportModel export = new ExportModel()
             {
@@ -32,7 +41,7 @@ namespace ExportWizard.DAL.Exports
             {
                 foreach (var subExport in exportConfig.SubExports)
                 {
-                    export.SubExports.Add(GetExportRecord(subExport));
+                    export.SubExports.Add(GetExportRecord(null,subExport));
                 }
             }
 
@@ -42,10 +51,11 @@ namespace ExportWizard.DAL.Exports
 
         }
 
-        public ExportRecord GetExportRecord(Models.QuickExport.Export export)
+        public ExportRecord GetExportRecord(String filename, Models.QuickExport.Export export)
         {
 
             var header = GetDefaultHeader(
+                filename,
                 export.Header.FileType,
                 export.Header.FileDescription,
                 export.Header.SourceViewCode,
@@ -73,7 +83,7 @@ namespace ExportWizard.DAL.Exports
         }
 
 
-        private HeaderModel GetDefaultHeader(String fileType, String description, String exportTable, String whereClause)
+        private HeaderModel GetDefaultHeader(String filename, String fileType, String description, String exportTable, String whereClause)
         {
             return new HeaderModel()
             {
@@ -81,16 +91,19 @@ namespace ExportWizard.DAL.Exports
                 FileType = fileType,
                 FileDescription = description,
                 SourceViewCode = exportTable,
-                FileName = "'" + exportTable + "_'||PMS_P.resort||'_'||To_CHAR(pms_p.business_date,'YYYYMMDD')",
+                FileName = "'" + filename + "_'||PMS_P.resort||'_'||To_CHAR(pms_p.business_date,'YYYYMMDD')",
                 FileExtension = "''csv''",
                 ColSeparator = "TAB",
                 WhereClause = whereClause,
-                RunInNaYn = "Y"
+                RunInNaYn = "Y",
+                ProgramName = "DataVisionReports",
+                Company = "Datavision"
             };
         }
 
         private ColumnModel GetDetail(int counter, String field)
         {
+
             return new ColumnModel()
             {
                 ExpFileDtlId = counter,

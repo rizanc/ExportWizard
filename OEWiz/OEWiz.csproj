@@ -7,8 +7,8 @@
     <ProjectGuid>{DE56EA3E-ADCE-4A2B-B287-16EAEA9BC03C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OEWiz</RootNamespace>
-    <AssemblyName>OEWiz</AssemblyName>
+    <RootNamespace>OEGen</RootNamespace>
+    <AssemblyName>OEGen</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

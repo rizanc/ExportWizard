@@ -29,7 +29,7 @@ namespace ExportWizard.DAL
 
             PrintQuery(export.MainExport);
 
-            string header = Serialize(export.MainExport.header, false, vIsComponent, exportSequence++);
+            string header = Serialize(export.MainExport.header, false, vIsComponent, exportSequence++, export.MainExport);
             string column = Serialize(export.MainExport.header.FileType, export.MainExport.columns);
 
             content += header + "\n" + column;
@@ -40,7 +40,7 @@ namespace ExportWizard.DAL
                 {
                     PrintQuery(exportRecord);
 
-                    header = Serialize(exportRecord.header, true, false, exportSequence++);
+                    header = Serialize(exportRecord.header, true, false, exportSequence++, export.MainExport);
                     column = Serialize(exportRecord.header.FileType, exportRecord.columns, true);
 
                     content += header + "\n" + column;
@@ -55,7 +55,7 @@ namespace ExportWizard.DAL
             return serialized;
         }
 
-        public string Serialize(HeaderModel header, bool isSubHeader = false, bool isComponent = false, int exportSequence = 1)
+        public string Serialize(HeaderModel header, bool isSubHeader = false, bool isComponent = false, int exportSequence = 1, ExportRecord mainExport = null)
         {
             string serialized = "";
             try
@@ -73,8 +73,36 @@ namespace ExportWizard.DAL
                 st.SetAttribute("resort", "rec.resort");
                 st.SetAttribute("source_view_code", WithQuotes(header.SourceViewCode));
                 st.SetAttribute("file_name", WithQuotes(header.FileName));
-                st.SetAttribute("where_clause", WithQuotes(header.WhereClause));
+                st.SetAttribute("program_name", WithQuotes(header.ProgramName));
+                st.SetAttribute("company", WithQuotes(header.Company));
+
+                var editedWhereClause = header.WhereClause;
+                if (header.WhereClause == null || header.WhereClause == "")
+                {
+                    Logger.Error(header.SourceViewCode + " Where [NO WHERE CLAUSE]");
+                    editedWhereClause += " rownum < 1001 ";
+                }
+                else
+                {
+                    //Logger.Info(header.SourceViewCode + " Where " + header.WhereClause);
+                    //editedWhereClause += " and rownum < 301 ";
+                }
+
+                if (mainExport != null && mainExport.header.FileDescription.Contains("Configuration"))
+                {
+                    String clause = "";
+                    st.SetAttribute("where_clause", WithQuotes(clause));
+                }
+                else
+                {
+                    st.SetAttribute("where_clause", WithQuotes(editedWhereClause));
+                }
+                
                 st.SetAttribute("export_sequence", exportSequence);
+
+
+                Logger.Info(header.SourceViewCode + " Where " + editedWhereClause);
+
 
                 if (isComponent)
                     st.SetAttribute("is_component", WithQuotes("Y"));
@@ -165,9 +193,15 @@ namespace ExportWizard.DAL
 
                     if (!column.DatabaseYn.Equals('N'))
                     {
-                        st.SetAttribute("col_type", WithQuotes(column.ColType));
-                        st.SetAttribute("database_yn", WithQuotes("Y"));
-                        st.SetAttribute("formula", WithQuotes(""));
+                        //st.SetAttribute("col_type", WithQuotes(column.ColType));
+                        //st.SetAttribute("database_yn", WithQuotes("Y"));
+                        //st.SetAttribute("formula", WithQuotes(""));
+
+                        st.SetAttribute("col_type", WithQuotes("FORMULA"));
+                        st.SetAttribute("database_yn", WithQuotes("N"));
+                        st.SetAttribute("formula", WithQuotes(@"regexp_replace(" + column.ColName.ToUpper() + ", '\\s+',' ')"));
+
+
                     }
                     else
                     {
@@ -293,7 +327,7 @@ Declare
     end if;
   end;
 
-  procedure insert_header (fileType Varchar2, fileDescription Varchar2, expFileId Number, resort Varchar2, sourceViewCode Varchar2, filename Varchar2, whereClause Varchar2, componentExportYN Varchar2 := null, expParentId Number := null, exportSequence Number := null ) is
+  procedure insert_header (fileType Varchar2, fileDescription Varchar2, expFileId Number, resort Varchar2, sourceViewCode Varchar2, filename Varchar2, whereClause Varchar2, programName Varchar2, company Varchar2, componentExportYN Varchar2 := null, expParentId Number := null, exportSequence Number := null ) is
   begin
     INSERT INTO EXP_FILE_HDR 
           (
@@ -327,7 +361,9 @@ Declare
               sftp_yn,
               always_hdrfooter_yn,
               parent_id,
-              export_sequence
+              export_sequence,
+              program_name,
+              company
           ) VALUES
           ( 
               expFileId,
@@ -357,10 +393,12 @@ Declare
               componentExportYN,
               'N',
               'N',
-              'N',
+              'Y',
               'Y',
               expParentId,
-              exportSequence
+              exportSequence,
+              programName,
+              company
           );
   end;
 
@@ -431,10 +469,10 @@ END;
 @"
 enable_view($source_view_code$);
 
-insert_header ($file_type$, $file_type_desc$, $exp_file_id$, $resort$, $source_view_code$, $file_name$, $where_clause$, $is_component$ ) ;
+insert_header ($file_type$, $file_type_desc$, $exp_file_id$, $resort$, $source_view_code$, $file_name$, $where_clause$, $program_name$, $company$, $is_component$ ) ;
 
 insert into exp_file_delivery(exp_file_id, comm_type,host_url,user_id, password, directory, safe_create_yn, ftp_passive_yn, ascii_transfer_yn, retry_count, retry_interval_sec, insert_date, insert_user, update_date, update_user)
-values ($exp_file_id$, 'SFTP_PASSWORD','207.237.172.248','mhg.Kalibri','@3133@5572086329500FB35DFCB6B5BB661FFF','/CRM/UK','Y','Y','Y',5,3600,sysdate,uid,sysdate,uid);
+values ($exp_file_id$, 'SFTP_PASSWORD','207.237.172.248','mhg.dvexport','@3135@AE699251B9625B90C8332DD4419420B7','/','Y','Y','Y',5,3600,sysdate,uid,sysdate,uid);
 
 
 ";
@@ -450,7 +488,7 @@ select exp_file_id_seqno.nextval
             into vSecondaryId
             from dual;
 
-insert_header ($file_type$, $file_type_desc$, vSecondaryId, $resort$, $source_view_code$, $file_name$, $where_clause$, 'N', $parent_id$, $export_sequence$ ) ;";
+insert_header ($file_type$, $file_type_desc$, vSecondaryId, $resort$, $source_view_code$, $file_name$, $where_clause$, $program_name$, $company$, 'N', $parent_id$, $export_sequence$ ) ;";
 
         private string newSubColumnTemplate = @"
 insert_column ( vSecondaryId, $exp_file_dtl_id$,  $col_name$ , $col_type$, $formula$, $database_yn$ ,$order_by$, $gen_type$ );";
