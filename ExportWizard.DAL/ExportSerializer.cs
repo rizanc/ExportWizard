@@ -80,7 +80,7 @@ namespace ExportWizard.DAL
                 if (header.WhereClause == null || header.WhereClause == "")
                 {
                     Logger.Error(header.SourceViewCode + " Where [NO WHERE CLAUSE]");
-                    editedWhereClause += " rownum < 1001 ";
+                    //editedWhereClause += " rownum < 1001 ";
                 }
                 else
                 {
@@ -199,7 +199,7 @@ namespace ExportWizard.DAL
 
                         st.SetAttribute("col_type", WithQuotes("FORMULA"));
                         st.SetAttribute("database_yn", WithQuotes("N"));
-                        st.SetAttribute("formula", WithQuotes(@"regexp_replace(" + column.ColName.ToUpper() + ", '\\s+',' ')"));
+                        st.SetAttribute("formula", WithQuotes(@"regexp_replace(" + column.ColName.ToUpper() + @", '\s+',' ')"));
 
 
                     }
