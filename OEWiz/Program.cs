@@ -118,13 +118,13 @@ namespace OEGen
             par.AppendLine("=============================================================================");
             par.AppendLine("Usage:                                                                     ==");
             par.AppendLine("=============================================================================");
-            par.AppendLine("OEWiz ?     // Get This Help Screen");
+            par.AppendLine("OEGen ?     // Get This Help Screen");
             par.AppendLine("or");
-            par.AppendLine("OEWiz [in:config.json] [resort:*]");
+            par.AppendLine("OEGen [in:config.json] [resort:*]");
             par.AppendLine("");
             par.AppendLine("[in:config.json]  File to process. If not provided, process all .json files");
             par.AppendLine("[resort:*]        When present, overrides the resort in the .json");
-            par.AppendLine("=============================================================================");
+            par.AppendLine("v.001=============================================================================");
             Console.WriteLine(  par.ToString() );
 
         }

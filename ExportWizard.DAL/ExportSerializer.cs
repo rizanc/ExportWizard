@@ -43,7 +43,19 @@ namespace ExportWizard.DAL
                     header = Serialize(exportRecord.header, true, false, exportSequence++, export.MainExport);
                     column = Serialize(exportRecord.header.FileType, exportRecord.columns, true);
 
-                    content += header + "\n" + column;
+                    if (exportRecord.ChainBased)
+                    {
+                        
+                        string start = "\n\nif rec.resort ='"+export.ChainBasedResort+"' then \n\n";
+                        string end = "\n\nend if; \n\n";
+
+                        content += start + header + "\n" + column + end;
+
+                    }
+                    else
+                    {
+                        content +=  header + "\n" + column;
+                    }
                 }
             }
 
@@ -97,7 +109,7 @@ namespace ExportWizard.DAL
                 {
                     st.SetAttribute("where_clause", WithQuotes(editedWhereClause));
                 }
-                
+
                 st.SetAttribute("export_sequence", exportSequence);
 
 
@@ -115,6 +127,7 @@ namespace ExportWizard.DAL
                     st.SetAttribute("parent_id", "null");
 
                 serialized = st.ToString();
+
 
             }
             catch (Exception ex)
@@ -293,12 +306,12 @@ namespace ExportWizard.DAL
                 throw new ArgumentException("No Columns defined for " + exportRecord.header.FileType);
 
             string select = "Select ";
-            foreach(var column in exportRecord.columns)
+            foreach (var column in exportRecord.columns)
             {
                 select += column.ColName + ", ";
             }
 
-            select = select.Remove(select.Length -2, 2);
+            select = select.Remove(select.Length - 2, 2);
 
             select += " from " + exportRecord.header.SourceViewCode;
 

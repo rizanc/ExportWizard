@@ -34,7 +34,7 @@ namespace ExportWizard.Tests.Initialization
         public void Seed()
         {
 
-            var script = new DataVision().GetSettings();
+            //var script = new DataVision().GetSettings();
 
             //var muckified = Muckify(ref script);
 

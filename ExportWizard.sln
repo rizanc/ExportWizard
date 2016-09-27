@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportWizard.Tests", "Expor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportWizard.DAL", "ExportWizard.DAL\ExportWizard.DAL.csproj", "{E5F1ED6D-31F4-4B7A-9A31-B8993128E73E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OEWiz", "OEWiz\OEWiz.csproj", "{DE56EA3E-ADCE-4A2B-B287-16EAEA9BC03C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OEGen", "OEWiz\OEGen.csproj", "{DE56EA3E-ADCE-4A2B-B287-16EAEA9BC03C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

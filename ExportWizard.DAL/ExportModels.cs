@@ -17,7 +17,7 @@ namespace ExportWizard.DAL
         }
 
         public string Resort { get; set; }
-
+        public string ChainBasedResort { get; set; }
         public ExportRecord MainExport { get; set; }
         public List<ExportRecord> SubExports { get; set; }
 
@@ -25,7 +25,7 @@ namespace ExportWizard.DAL
 
     public class ExportRecord
     {
-
+        public bool ChainBased { get; set; }
         public HeaderModel header { get; set; }
         public List<ColumnModel> columns { get; set; }
     }

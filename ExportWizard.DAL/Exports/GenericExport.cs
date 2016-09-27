@@ -32,6 +32,7 @@ namespace ExportWizard.DAL.Exports
 
             ExportModel export = new ExportModel()
             {
+                ChainBasedResort = exportConfig.ChainBasedResort,
                 Resort = exportConfig.Resort,
                 MainExport = mainExport,
                 SubExports = new List<ExportRecord>()
@@ -41,7 +42,7 @@ namespace ExportWizard.DAL.Exports
             {
                 foreach (var subExport in exportConfig.SubExports)
                 {
-                    export.SubExports.Add(GetExportRecord(null,subExport));
+                    export.SubExports.Add(GetExportRecord(null, subExport));
                 }
             }
 
@@ -74,6 +75,7 @@ namespace ExportWizard.DAL.Exports
 
             ExportRecord record = new ExportRecord()
             {
+                ChainBased = export.ChainBased,
                 header = header,
                 columns = details
             };

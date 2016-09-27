@@ -8,8 +8,8 @@ namespace ExportWizard.DAL.Models.QuickExport
 {
     public class Configuration
     {
-        public String ChainBasedResort { get; set; }
         public String Resort { get; set; }
+        public String ChainBasedResort { get; set; }
         public String FileName { get; set; }
         public Export MainExport { get; set; }
         public Export[] SubExports { get; set; }
@@ -17,9 +17,8 @@ namespace ExportWizard.DAL.Models.QuickExport
 
     public class Export
     {
-        // This field is chain based. Not resort specific.
-        public String ChainBased { get; set; }
-        
+        // This table is chain based. Not resort specific.
+        public bool ChainBased { get; set; }
 
         public ExportHeader Header { get; set; }
         public String[] Columns { get; set; }
