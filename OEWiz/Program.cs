@@ -46,6 +46,10 @@ namespace OEGen
                             {
                                 parameters.Add(argPair[0], argPair[1]);
                             }
+                            else if (argPair[0].ToLower().Equals("cbr"))
+                            {
+                                parameters.Add(argPair[0], argPair[1]);
+                            }
                             else if (argPair[0].ToLower().Equals("resort"))
                             {
                                 parameters.Add(argPair[0], argPair[1]);
@@ -60,9 +64,16 @@ namespace OEGen
                     }
 
                     String resort = null;
+                    String cbr = null;
+
                     if (parameters.ContainsKey("resort"))
                     {
                         resort = parameters["resort"];
+                    }
+
+                    if (parameters.ContainsKey("cbr"))
+                    {
+                        cbr = parameters["cbr"];
                     }
 
                     if (parameters.ContainsKey("in"))
@@ -70,11 +81,11 @@ namespace OEGen
                         var rootFilename = Path.GetFileNameWithoutExtension(parameters["in"]);
                         var filename = parameters["in"];
 
-                        GenerateFile(rootFilename, filename, resort);
+                        GenerateFile(rootFilename, filename, resort, cbr);
                     }
                     else
                     {
-                        ProcessAllFiles(resort);
+                        ProcessAllFiles(resort,cbr);
                     }
 
 
@@ -88,7 +99,7 @@ namespace OEGen
             }
         }
 
-        private static void ProcessAllFiles(String resort = null)
+        private static void ProcessAllFiles(String resort = null, string cbr = null)
         {
             var files = Directory.GetFiles(".", "*.json");
             if (files != null && files.Length > 0)
@@ -96,7 +107,7 @@ namespace OEGen
                 foreach (var file in files)
                 {
                     var rootFilename = Path.GetFileNameWithoutExtension(file);
-                    GenerateFile(rootFilename, file, resort);
+                    GenerateFile(rootFilename, file, resort, cbr);
                 }
             }
             else
@@ -105,9 +116,9 @@ namespace OEGen
             }
         }
 
-        private static void GenerateFile(string rootFilename, string filename, string resort = null)
+        private static void GenerateFile(string rootFilename, string filename, string resort = null, string cbr = null)
         {
-            var settings = new GenericExport().GetSettings(filename, resort);
+            var settings = new GenericExport().GetSettings(filename, resort, cbr);
             System.IO.File.WriteAllText(rootFilename + OUT_EXTENSION, settings);
             Console.WriteLine("Wrote data to " + rootFilename + OUT_EXTENSION);
         }
@@ -124,6 +135,7 @@ namespace OEGen
             par.AppendLine("");
             par.AppendLine("[in:config.json]  File to process. If not provided, process all .json files");
             par.AppendLine("[resort:*]        When present, overrides the resort in the .json");
+            par.AppendLine("[cbr:ABC]        When present, overrides the chain based resort in the .json");
             par.AppendLine("v.001=============================================================================");
             Console.WriteLine(  par.ToString() );
 

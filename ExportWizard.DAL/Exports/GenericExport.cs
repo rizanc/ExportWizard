@@ -9,7 +9,7 @@ namespace ExportWizard.DAL.Exports
 {
     public class GenericExport
     {
-        public String GetSettings(String filename, String overrideResort = null)
+        public String GetSettings(String filename, String overrideResort = null, String overrideCBR = null)
         {
             String text = System.IO.File.ReadAllText(filename);
 
@@ -27,6 +27,11 @@ namespace ExportWizard.DAL.Exports
             if (overrideResort != null)
             {
                 exportConfig.Resort = overrideResort;
+            }
+
+            if (overrideCBR != null)
+            {
+                exportConfig.ChainBasedResort = overrideCBR;
             }
             //==========================================================================
 
