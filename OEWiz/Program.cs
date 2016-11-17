@@ -1,4 +1,6 @@
 ﻿using ExportWizard.DAL.Exports;
+using ExportWizard.DAL.Models.QuickExport;
+using ExportWizard.DAL.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -94,8 +96,8 @@ namespace OEGen
             }
             catch (ArgumentException ex)
             {
-
-                ShowParameters();
+                Logger.Error(ex);
+                ShowParameters(ex.Message);
             }
         }
 
@@ -116,16 +118,41 @@ namespace OEGen
             }
         }
 
-        private static void GenerateFile(string rootFilename, string filename, string resort = null, string cbr = null)
+        private static Setup LoadSetup()
         {
-            var settings = new GenericExport().GetSettings(filename, resort, cbr);
-            System.IO.File.WriteAllText(rootFilename + OUT_EXTENSION, settings);
-            Console.WriteLine("Wrote data to " + rootFilename + OUT_EXTENSION);
+            Setup setup = null;
+            string setupFile = "./setup.config";
+
+            if( File.Exists(setupFile))
+            {
+                setup = new GenericExport().GetSetup(setupFile);
+            }
+
+            return setup;
         }
 
-        public static void ShowParameters()
+        private static void GenerateFile(string rootFilename, string filename, string resort = null, string cbr = null)
+        {
+            Logger.Debug("Working on " + filename);
+            var settings = new GenericExport().GetSettings(
+                filename, 
+                LoadSetup(), 
+                resort, 
+                cbr);
+
+            System.IO.File.WriteAllText(rootFilename + OUT_EXTENSION, settings);
+            Console.WriteLine("Wrote data to " + rootFilename + OUT_EXTENSION);
+            Logger.Debug("Wrote data to " + rootFilename + OUT_EXTENSION);
+        }
+
+        public static void ShowParameters(String error = null)
         {
             StringBuilder par = new StringBuilder();
+            if (error != null)
+            {
+                par.AppendLine("=============================================================================");
+                par.AppendLine(error);
+            }
             par.AppendLine("=============================================================================");
             par.AppendLine("Usage:                                                                     ==");
             par.AppendLine("=============================================================================");

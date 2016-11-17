@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExportWizard.DAL.Models.QuickExport;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,13 @@ namespace ExportWizard.DAL
 
         public string Resort { get; set; }
         public string ChainBasedResort { get; set; }
+        public bool RunInNa { get; set; }
+        public string ProgramName { get; set; }
+        public string CompanyName { get; set; }
+
         public ExportRecord MainExport { get; set; }
         public List<ExportRecord> SubExports { get; set; }
+        public Setup Setup { get; set; }
 
     }
 
@@ -58,6 +64,7 @@ namespace ExportWizard.DAL
         public int ExpFileId { get; set; }
         public int ExpFileDtlId { get; set; }
         public string ColName { get; set; }
+        public string ColFormatted { get; set; }
         public int ColLength { get; set; }
         public string ColAlignment { get; set; }
         public int OrderBy { get; set; }

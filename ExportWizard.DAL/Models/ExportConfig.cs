@@ -11,6 +11,9 @@ namespace ExportWizard.DAL.Models.QuickExport
         public String Resort { get; set; }
         public String ChainBasedResort { get; set; }
         public String FileName { get; set; }
+        public String CompanyName { get; set; }
+        public String ProgramName { get; set; }
+        public bool? RunInNa { get; set; }
         public Export MainExport { get; set; }
         public Export[] SubExports { get; set; }
     }
@@ -33,5 +36,24 @@ namespace ExportWizard.DAL.Models.QuickExport
 
     }
 
+    /*
+     * 
+     * "host":"207.237.172.248",
+	 "username": "mhg.dvexport",
+	 "password":"@3135@AE699251B9625B90C8332DD4419420B7",
+	 "directory":"/"
+     */
+    public class Delivery
+    {
+        public string Host { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Directory { get; set; }
+    }
+
+    public class Setup
+    {
+        public Delivery Delivery { get; set; }
+    }
 
 }
