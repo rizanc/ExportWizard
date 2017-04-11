@@ -3,9 +3,6 @@ using ExportWizard.DAL.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExportWizard.DAL.Exports
 {
@@ -44,7 +41,7 @@ namespace ExportWizard.DAL.Exports
 
             if (exportConfig.RunInNa == null)
             {
-                exportConfig.RunInNa = true;
+                exportConfig.RunInNa = false;
             }
 
 
