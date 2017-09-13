@@ -8,11 +8,7 @@ namespace ExportWizard.DAL.Models.QuickExport
 {
     public class Configuration
     {
-        public String Resort { get; set; }
-        public String ChainBasedResort { get; set; }
         public String FileName { get; set; }
-        public String CompanyName { get; set; }
-        public String ProgramName { get; set; }
         public bool? RunInNa { get; set; }
         public Export MainExport { get; set; }
         public Export[] SubExports { get; set; }
@@ -45,6 +41,7 @@ namespace ExportWizard.DAL.Models.QuickExport
      */
     public class Delivery
     {
+        public string Type { get; set; }
         public string Host { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
@@ -53,6 +50,8 @@ namespace ExportWizard.DAL.Models.QuickExport
 
     public class Setup
     {
+        public String Company { get; set; }
+        public String ProgramName { get; set; }
         public Delivery Delivery { get; set; }
     }
 

@@ -23,12 +23,28 @@ namespace ExportWizard.DAL.Exports
                 throw new ArgumentException("Could not parse Setup located at " + filename);
             }
 
+            if (setup.Company == null || setup.Company.Trim().Equals(""))
+            {
+                throw new ArgumentException("Company Must Be provided in the setup file");
+            }
+
+            if (setup.ProgramName == null || setup.ProgramName.Trim().Equals(""))
+            {
+                throw new ArgumentException("ProgramName Must Be provided in the setup file");
+            }
+
+            if (setup.Delivery == null)
+            {
+                throw new ArgumentException("Delivery Must Be provided in the setup file");
+            }
+
+
             return setup;
 
         }
 
 
-        public String GetSettings(String filename, Setup setup, String overrideResort = null, String overrideCBR = null)
+        public String GetSettings(String filename, Setup setup, String inResort = "*", String inCbr = null)
         {
 
             String text = System.IO.File.ReadAllText(filename);
@@ -45,30 +61,16 @@ namespace ExportWizard.DAL.Exports
             }
 
 
-            ExportRecord mainExport = GetExportRecord(exportConfig.FileName, exportConfig.CompanyName, exportConfig.ProgramName, (bool) exportConfig.RunInNa, exportConfig.MainExport);
-
-            //=========================================================================
-            // OVERRIDES
-            //=========================================================================
-            if (overrideResort != null)
-            {
-                exportConfig.Resort = overrideResort;
-            }
-
-            if (overrideCBR != null)
-            {
-                exportConfig.ChainBasedResort = overrideCBR;
-            }
-            //==========================================================================
+            ExportRecord mainExport = GetExportRecord(exportConfig.FileName, setup.Company, setup.ProgramName, (bool)exportConfig.RunInNa, exportConfig.MainExport);
 
             ExportModel export = new ExportModel()
             {
-                ChainBasedResort = exportConfig.ChainBasedResort,
-                Resort = exportConfig.Resort,
+                ChainBasedResort = inCbr,
+                Resort = inResort,
                 MainExport = mainExport,
                 RunInNa = (bool)exportConfig.RunInNa,
-                ProgramName = exportConfig.ProgramName,
-                CompanyName = exportConfig.CompanyName,
+                ProgramName = setup.ProgramName,
+                CompanyName = setup.Company,
                 SubExports = new List<ExportRecord>(),
                 Setup = setup
             };
@@ -77,7 +79,7 @@ namespace ExportWizard.DAL.Exports
             {
                 foreach (var subExport in exportConfig.SubExports)
                 {
-                    export.SubExports.Add(GetExportRecord(null, exportConfig.CompanyName, exportConfig.ProgramName, (bool) exportConfig.RunInNa, subExport));
+                    export.SubExports.Add(GetExportRecord(null, setup.Company, setup.ProgramName, (bool)exportConfig.RunInNa, subExport));
                 }
             }
 
@@ -144,9 +146,8 @@ namespace ExportWizard.DAL.Exports
                 ColSeparator = "TAB",
                 WhereClause = whereClause,
                 RunInNaYn = runInNa ? "Y" : "N",
-                ProgramName = programName, // "DataVisionReports",
-                Company = companyName // "Datavision"
-            };
+                ProgramName = programName, 
+                Company = companyName            };
         }
 
         private ColumnModel GetDetail(int counter, String field)
