@@ -35,7 +35,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Gurock.SmartInspect">
-      <HintPath>..\..\..\Program Files (x86)\Gurock Software\SmartInspect Professional\lib\dotnet\v2.x\Gurock.SmartInspect.dll</HintPath>
+      <HintPath>..\lib\Gurock.SmartInspect.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -66,9 +66,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Definitions\APPLICATION%24_USER.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Definitions\APPLICATION%24_USER.txt" />
     <Content Include="Definitions\CASHIERS.txt" />
     <Content Include="Definitions\CHANNELS.txt" />
   </ItemGroup>
